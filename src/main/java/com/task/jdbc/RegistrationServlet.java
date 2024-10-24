@@ -13,7 +13,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
 
 @WebServlet("/register")
@@ -21,18 +20,12 @@ public class RegistrationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private UserDB userDb;
-	@Resource(name="jdbc/registration")
-	private DataSource dataSource;
+	
    
 	  @Override
 	    public void init() throws ServletException {
 	        super.init();
-
-	        try {
-	            userDb = new UserDB(dataSource);
-	        } catch (Exception exc) {
-	            throw new ServletException(exc);
-	        }
+	        userDb = new UserDB();
 	    }
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -49,17 +42,26 @@ public class RegistrationServlet extends HttpServlet {
 	        String phone = request.getParameter("phone");
 	        String email = request.getParameter("email");
 	        String password = request.getParameter("password");
-
+	        
+	        if (firstName == null || lastName == null || phone == null || email == null || password == null ||
+	                firstName.isEmpty() || lastName.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty()) {
+	                response.sendRedirect("error.jsp"); 
+	                return;
+	            }
 	        User user = new User(firstName, lastName, phone, email, password);
 	        
 	        try {
 	            userDb.register(user);  
-	            response.sendRedirect("success.html"); 
+	            request.setAttribute("firstName", user.getFirstName());
+	            request.setAttribute("lastName", user.getLastName());
+	            request.setAttribute("email", user.getEmail());
+	            request.setAttribute("phone", user.getPhone());
+
+	            request.getRequestDispatcher("confirmation.jsp").forward(request, response);
 	        } catch (SQLException e) {
 	            e.printStackTrace();
-	            response.sendRedirect("error.html");
+	            response.sendRedirect("error.jsp");
 	        } catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }

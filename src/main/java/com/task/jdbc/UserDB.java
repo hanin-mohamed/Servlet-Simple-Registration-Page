@@ -11,13 +11,6 @@ import javax.sql.DataSource;
 
 public class UserDB {
 	
-    private DataSource dataSource;
-
-    
-	public UserDB(DataSource dataSource) {
-		super();
-		this.dataSource = dataSource;
-	}
 	
     public void register(User user) throws SQLException, ClassNotFoundException {
     	

@@ -16,9 +16,7 @@ public class DBConnection {
 	        String dbPassword = "hanona"; 
 	  
 	        Class.forName(dbDriver); 
-	        Connection con = DriverManager.getConnection(dbURL , 
-	                                                     dbUsername,  
-	                                                     dbPassword); 
+	        Connection con = DriverManager.getConnection(dbURL ,  dbUsername,  dbPassword); 
 	        return con; 
 	    } 
 }
